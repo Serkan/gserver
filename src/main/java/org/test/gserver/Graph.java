@@ -53,4 +53,11 @@ public interface Graph {
      */
     void dfs(Visitor visitor);
 
+    /**
+     * Getter for graph id.
+     *
+     * @return permanent id of graph
+     */
+    String getId();
+
 }

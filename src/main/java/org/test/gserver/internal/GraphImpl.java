@@ -6,10 +6,12 @@ import org.test.gserver.GraphStorage;
 import org.test.gserver.Visitor;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
- * Simple graph implantation, only supports for directed graphs.
+ * Simple graph implantation, only supports directed graphs.
  *
  * @author serkan
  */
@@ -32,7 +34,6 @@ class GraphImpl implements Graph {
     @Override
     public void traverse(Visitor visitor) {
         List<GraphNode> nodes = storage.nodes();
-        HashSet<String> visited = new HashSet<>();
         for (GraphNode node : nodes) {
             visitor.visit(node);
         }
@@ -40,12 +41,33 @@ class GraphImpl implements Graph {
 
     @Override
     public void bfs(Visitor visitor) {
-        // TODO breadth first search
+        Queue<GraphNode> queue = new LinkedList<>();
+        HashSet<GraphNode> visited = new HashSet<>();
+        List<GraphNode> roots = storage.roots();
+        for (GraphNode root : roots) {
+            if (!visited.contains(root)) {
+                visited.add(root);
+                queue.add(root);
+                while (!queue.isEmpty()) {
+                    GraphNode next = queue.poll();
+                    List<GraphNode> neighbors = next.getNeighbors();
+                    for (GraphNode neighbor : neighbors) {
+                        queue.add(neighbor);
+                    }
+                    visitor.visit(next);
+                }
+            }
+        }
     }
 
     @Override
     public void dfs(Visitor visitor) {
         // TODO depth first search
+    }
+
+    @Override
+    public String getId() {
+        return this.id;
     }
 
     @Override
