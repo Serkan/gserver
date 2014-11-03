@@ -42,17 +42,18 @@ class GraphImpl implements Graph {
     @Override
     public void bfs(Visitor visitor) {
         Queue<GraphNode> queue = new LinkedList<>();
-        HashSet<GraphNode> visited = new HashSet<>();
+        HashSet<GraphNode> queued = new HashSet<>();
         List<GraphNode> roots = storage.roots();
         for (GraphNode root : roots) {
-            if (!visited.contains(root)) {
-                visited.add(root);
+            if (!queued.contains(root)) {
+                queued.add(root);
                 queue.add(root);
                 while (!queue.isEmpty()) {
                     GraphNode next = queue.poll();
                     List<GraphNode> neighbors = next.getNeighbors();
                     for (GraphNode neighbor : neighbors) {
                         queue.add(neighbor);
+                        queued.add(neighbor);
                     }
                     visitor.visit(next);
                 }

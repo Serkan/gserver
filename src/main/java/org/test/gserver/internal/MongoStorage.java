@@ -94,13 +94,18 @@ class MongoStorage implements GraphStorage {
     }
 
     private List<GraphNode> getNeighborList(DBObject one) {
-        Type token = new TypeToken<ArrayList<GraphNodeProxyImpl>>() {
+        Type token = new TypeToken<ArrayList<NodeHead>>() {
 
         }.getType();
         Gson gson = new Gson();
         Object neighbors = one.get("neighbors");
         if (neighbors != null) {
-            return gson.fromJson(neighbors.toString(), token);
+            List<NodeHead> graphNodes = gson.fromJson(neighbors.toString(), token);
+            List<GraphNode> result = new LinkedList<>();
+            for (NodeHead graphNode : graphNodes) {
+                result.add(new GraphNodeProxyImpl(graphNode.getId(), graphNode.getType(), this));
+            }
+            return result;
         } else {
             return null;
         }
