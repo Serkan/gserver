@@ -16,7 +16,7 @@ public interface Graph {
      *
      * @return node representation which resides in the working graph
      */
-    GraphNode createNode(NodeKey nodeKey);
+    GraphNode createOrGetNode(NodeKey nodeKey);
 
     /**
      * Removes a node from graph and all incoming edges to given node.

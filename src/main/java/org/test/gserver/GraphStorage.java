@@ -45,7 +45,7 @@ public interface GraphStorage {
 	 * Creates a node for given id and type in storage.
 	 *
 	 */
-	void createNode(NodeKey key);
+	void createNodeIfNotExist(NodeKey key);
 
 	/**
 	 * As default adds neighbors directed from given source to given

@@ -68,7 +68,7 @@ class GraphImpl implements Graph {
 	}
 
 	@Override
-	public GraphNode createNode(NodeKey key) {
+	public GraphNode createOrGetNode(NodeKey key) {
 		return new GraphNodeProxyImpl(key, storage);
 	}
 }

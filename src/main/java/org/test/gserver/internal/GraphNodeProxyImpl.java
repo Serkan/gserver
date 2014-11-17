@@ -23,7 +23,7 @@ class GraphNodeProxyImpl extends GraphNode {
 	protected GraphNodeProxyImpl(NodeKey key, GraphStorage storage) {
 		super(key);
 		this.storage = storage;
-		storage.createNode(key);
+		storage.createNodeIfNotExist(key);
 	}
 
 	@Override
