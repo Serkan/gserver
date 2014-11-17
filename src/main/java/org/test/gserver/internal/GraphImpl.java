@@ -14,61 +14,83 @@ import java.util.Queue;
  */
 class GraphImpl implements Graph {
 
-	private String id;
+    private String id;
 
-	private GraphStorage storage;
+    private GraphStorage storage;
 
-	public GraphImpl(String id, GraphStorage storage) {
-		this.id = id;
-		this.storage = storage;
-	}
+    public GraphImpl(String id, GraphStorage storage) {
+        this.id = id;
+        this.storage = storage;
+    }
 
-	@Override
-	public void removeNode(NodeKey key) {
-		storage.removeNode(key);
-	}
+    @Override
+    public void removeNode(NodeKey key) {
+        storage.removeNode(key);
+    }
 
-	@Override
-	public void traverse(Visitor visitor) {
-		List<GraphNode> nodes = storage.nodes();
-		for (GraphNode node : nodes) {
-			visitor.visit(node);
-		}
-	}
+    @Override
+    public void traverse(Visitor visitor) {
+        List<GraphNode> nodes = storage.nodes();
+        for (GraphNode node : nodes) {
+            visitor.visit(node);
+        }
+    }
 
-	@Override
-	public void bfs(Visitor visitor) {
-		Queue<GraphNode> queue = new LinkedList<>();
-		HashSet<GraphNode> visited = new HashSet<>();
-		List<GraphNode> roots = storage.roots();
-		for (GraphNode root : roots) {
-			if (!visited.contains(root)) {
-				visited.add(root);
-				queue.add(root);
-				while (!queue.isEmpty()) {
-					GraphNode next = queue.poll();
-					List<GraphEdge> neighbors = next.getNeighbors();
-					for (GraphEdge neighbor : neighbors) {
-						queue.add(neighbor.getTarget());
-					}
-					visitor.visit(next);
-				}
-			}
-		}
-	}
+    @Override
+    public void bfs(Visitor visitor) {
+        Queue<GraphNode> queue = new LinkedList<>();
+        HashSet<GraphNode> visited = new HashSet<>();
+        List<GraphNode> roots = storage.roots();
+        for (GraphNode root : roots) {
+            if (!visited.contains(root)) {
+                visited.add(root);
+                queue.add(root);
+                while (!queue.isEmpty()) {
+                    GraphNode next = queue.poll();
+                    List<GraphEdge> neighbors = next.getNeighbors();
+                    for (GraphEdge neighbor : neighbors) {
+                        queue.add(neighbor.getTarget());
+                    }
+                    visitor.visit(next);
+                }
+            }
+        }
+    }
 
-	@Override
-	public void dfs(Visitor visitor) {
-		// TODO depth first search
-	}
+    @Override
+    public Queue<GraphNode> detectCycle() {
+        Queue<GraphNode> path = new LinkedList<>();
+        // depth-first search on graph
+        dfs(new Visitor() {
+            @Override
+            public void visit(GraphNode node) {
+                List<GraphEdge> neighbors = node.getNeighbors();
+                for (GraphEdge neighbor : neighbors) {
+                    GraphNode target = neighbor.getTarget();
+                    // TODO
+                }
+            }
+        });
+        return path;
+    }
 
-	@Override
-	public String getId() {
-		return this.id;
-	}
+    @Override
+    public void dfs(Visitor visitor) {
+        // TODO depth first search
+    }
 
-	@Override
-	public GraphNode createOrGetNode(NodeKey key) {
-		return new GraphNodeProxyImpl(key, storage);
-	}
+    @Override
+    public String getId() {
+        return this.id;
+    }
+
+    @Override
+    public void removeAll() {
+        storage.removeAll();
+    }
+
+    @Override
+    public GraphNode createOrGetNode(NodeKey key) {
+        return new GraphNodeProxyImpl(key, storage);
+    }
 }

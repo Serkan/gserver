@@ -154,6 +154,13 @@ class MongoStorage implements GraphStorage {
     }
 
     @Override
+    public void removeAll() {
+        BasicDBObject document = new BasicDBObject();
+        document.put("graphId", graphId);
+        graph.remove(document);
+    }
+
+    @Override
     public List<GraphNode> nodes() {
         BasicDBObject document = new BasicDBObject();
         document.put("graphId", graphId);
@@ -198,6 +205,7 @@ class MongoStorage implements GraphStorage {
         for (String s : foundKey.keySet()) {
             nodeKey.put(s, foundKey.get(s).toString());
         }
+        //clear potentially dangerous and unnecessary fields
         nodeKey.remove("_id");
         nodeKey.remove("graphId");
         return nodeKey;

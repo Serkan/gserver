@@ -1,5 +1,7 @@
 package org.test.gserver;
 
+import java.util.Queue;
+
 /**
  * Graph API main interface, all functionality provided by the library
  * is exposed through this interface.
@@ -20,7 +22,6 @@ public interface Graph {
 
     /**
      * Removes a node from graph and all incoming edges to given node.
-     *
      */
     void removeNode(NodeKey nodeKey);
 
@@ -42,6 +43,13 @@ public interface Graph {
     void bfs(Visitor visitor);
 
     /**
+     * Walk on the graph for cycles and returns the first found cycle path.
+     *
+     * @return cyclic path of the first found cycle otherwise empty queue
+     */
+    Queue<GraphNode> detectCycle();
+
+    /**
      * Depth first search on the graph, start from graph roots
      * (nodes which has no incoming edge).
      *
@@ -55,5 +63,10 @@ public interface Graph {
      * @return permanent id of graph
      */
     String getId();
+
+    /**
+     * Removes all nodes in the graph.
+     */
+    void removeAll();
 
 }
