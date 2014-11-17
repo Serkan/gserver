@@ -14,19 +14,15 @@ public interface Graph {
      * construction because {@link org.test.gserver.GraphNode}  has a
      * "protected"  class constructor.
      *
-     * @param id   id of node
-     * @param type type of node
      * @return node representation which resides in the working graph
      */
-    GraphNode createNode(String id, String type);
+    GraphNode createNode(NodeKey nodeKey);
 
     /**
      * Removes a node from graph and all incoming edges to given node.
      *
-     * @param id   id of node
-     * @param type type of node
      */
-    void removeNode(String id, String type);
+    void removeNode(NodeKey nodeKey);
 
     /**
      * Iterates all graph nodes. It  guarantees that multiple visiting to

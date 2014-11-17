@@ -1,5 +1,6 @@
 package org.test.gserver.algorithm;
 
+import org.test.gserver.GraphEdge;
 import org.test.gserver.GraphNode;
 
 import java.util.*;
@@ -24,8 +25,9 @@ public final class DijkstraShortestPath {
                 found = true;
                 break;
             } else {
-                List<GraphNode> neighbors = current.getNeighbors();
-                for (GraphNode neighbor : neighbors) {
+                List<GraphEdge> neighbors = current.getNeighbors();
+                for (GraphEdge n : neighbors) {
+                    GraphNode neighbor = n.getTarget();
                     if (queued.contains(neighbor)) {
                         continue;
                     }

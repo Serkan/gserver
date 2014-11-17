@@ -1,7 +1,9 @@
 package org.test.gserver.internal;
 
+import org.test.gserver.GraphEdge;
 import org.test.gserver.GraphNode;
 import org.test.gserver.GraphStorage;
+import org.test.gserver.NodeKey;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,49 +18,37 @@ import java.util.Map;
  */
 class GraphNodeProxyImpl extends GraphNode {
 
-    private final GraphStorage storage;
+	private final GraphStorage storage;
 
-    protected GraphNodeProxyImpl(String id, String type, GraphStorage storage) {
-        super(id, type);
-        this.storage = storage;
-        storage.createNode(id, type);
-    }
+	protected GraphNodeProxyImpl(NodeKey key, GraphStorage storage) {
+		super(key);
+		this.storage = storage;
+		storage.createNode(key);
+	}
 
-    @Override
-    public void addNeighbor(GraphNode target) {
-        storage.addNeighbor(getId(), getType(), target);
-    }
+	@Override
+	public void addNeighbor(GraphNode target, Map<String, String> attr) {
+		storage.addNeighbor(getKey(), target, attr);
+	}
 
-    @Override
-    public List<GraphNode> getNeighbors() {
-        List<GraphNode> neighbors = storage.getNeighbors(getId(), getType());
-        if (neighbors != null && neighbors.size() > 0) {
-            return Collections.unmodifiableList(neighbors);
-        } else {
-            return Collections.emptyList();
-        }
-    }
+	@Override
+	public List<GraphEdge> getNeighbors() {
+		List<GraphEdge> neighbors = storage.getNeighbors(getKey());
+		if (neighbors != null && neighbors.size() > 0) {
+			return Collections.unmodifiableList(neighbors);
+		} else {
+			return Collections.emptyList();
+		}
+	}
 
-    @Override
-    public void putAttr(Map<String, String> attr) {
-        storage.putAttr(getId(), getType(), attr);
-    }
+	@Override
+	public void putAttr(Map<String, String> attr) {
+		storage.putAttr(getKey(), attr);
+	}
 
-    @Override
-    public Map<String, String> gettAttr() {
-        return storage.getAttr(getId(), getType());
-    }
+	@Override
+	public Map<String, String> gettAttr() {
+		return storage.getAttr(getKey());
+	}
 
-
-    @Override
-    public int hashCode() {
-        return (getId() + getType()).hashCode();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        return o.hashCode() == this.hashCode();
-    }
 }

@@ -4,39 +4,32 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Base data structure to keep node id and type.
+ * Base data structure to keep node key and type.
  *
  * @author serkan
  */
 public abstract class GraphNode {
 
-    private String id;
+	private NodeKey key;
 
-    private String type;
+	protected GraphNode(NodeKey key) {
+		this.key = key;
+	}
 
-    protected GraphNode(String id, String type) {
-        this.id = id;
-        this.type = type;
-    }
+	public NodeKey getKey() {
+		return key;
+	}
 
-    public String getId() {
-        return id;
-    }
+	public abstract void addNeighbor(GraphNode target, Map<String, String> attr);
 
-    public String getType() {
-        return type;
-    }
+	public abstract List<GraphEdge> getNeighbors();
 
-    public abstract void addNeighbor(GraphNode target);
+	public abstract void putAttr(Map<String, String> attr);
 
-    public abstract List<GraphNode> getNeighbors();
+	public abstract Map<String, String> gettAttr();
 
-    public abstract void putAttr(Map<String, String> attr);
-
-    public abstract Map<String, String> gettAttr();
-
-    @Override
-    public int hashCode() {
-        return (id + type).hashCode();
-    }
+	@Override
+	public int hashCode() {
+		return key.hashCode();
+	}
 }
