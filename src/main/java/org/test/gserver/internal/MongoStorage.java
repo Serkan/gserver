@@ -45,6 +45,7 @@ class MongoStorage implements GraphStorage {
         BasicDBObject document = new BasicDBObject();
         document.put("graphId", graphId);
         document.put("documentType", "node");
+        document.put("isRoot", true);
         Object oID = createOrGetKeyDocumentAndGetId(key);
         document.put("key", oID);
         if (graph.count(document) < 1) {
@@ -62,8 +63,8 @@ class MongoStorage implements GraphStorage {
 
         BasicDBList neighborList;
         BasicDBObject edge = new BasicDBObject();
-        Object oID = createOrGetKeyDocumentAndGetId(target.getKey());
-        edge.put("key", oID);
+        Object targetOId = createOrGetKeyDocumentAndGetId(target.getKey());
+        edge.put("key", targetOId);
         edge.put("attr", attr);
 
         BasicDBObject old = (BasicDBObject) node;
@@ -82,6 +83,28 @@ class MongoStorage implements GraphStorage {
         neighborList.add(edge);
         next.put("neighbors", neighborList);
         graph.update(old, next);
+
+        // record incoming edge for target node, it will be used for fast removal
+        BasicDBObject incoming = new BasicDBObject();
+        incoming.put("graphId", graphId);
+        incoming.put("key", targetOId);
+        incoming.put("documentType", "incoming");
+        DBObject foundIncomings = graph.findOne(incoming);
+        if (foundIncomings != null) {
+            BasicDBObject oldIncomings = (BasicDBObject) ((BasicDBObject) foundIncomings).copy();
+            BasicDBList incomingList = (BasicDBList) foundIncomings.get("incomings");
+            incomingList.add(sourceOID);
+            foundIncomings.put("incomings", incomingList);
+            graph.update(oldIncomings, foundIncomings);
+
+            // set target node's root flag to false
+            // TODO (serkan)
+        } else {
+            BasicDBList incomingList = new BasicDBList();
+            incomingList.add(sourceOID);
+            incoming.put("incomings", incomingList);
+            graph.save(incoming);
+        }
     }
 
     @Override
@@ -126,9 +149,43 @@ class MongoStorage implements GraphStorage {
     public void removeNode(NodeKey key) {
         BasicDBObject document = new BasicDBObject();
         document.put("graphId", graphId);
+        document.put("documentType", "node");
         Object oID = createOrGetKeyDocumentAndGetId(key);
         document.put("key", oID);
         graph.remove(document);
+
+        // remove incoming edges
+        BasicDBObject incoming = new BasicDBObject();
+        incoming.put("graphId", graphId);
+        incoming.put("key", oID);
+        incoming.put("documentType", "incoming");
+        DBObject foundIncomings = graph.findOne(incoming);
+        if (foundIncomings != null) {
+            BasicDBList incomings = (BasicDBList) foundIncomings.get("incomings");
+            for (Object sourceOId : incomings) {
+                BasicDBObject source = new BasicDBObject();
+                source.put("key", sourceOId);
+                source.put("graphId", graphId);
+                source.put("documentType", "node");
+                BasicDBObject s = (BasicDBObject) graph.findOne(source);
+                BasicDBObject old = (BasicDBObject) s.copy();
+                BasicDBList neighbors = (BasicDBList) s.get("neighbors");
+                for (Object neighbor : neighbors) {
+                    BasicDBObject edge = (BasicDBObject) neighbor;
+                    Object edgeKey = edge.get("key");
+                    if (edgeKey.equals(oID)) {
+                        neighbors.remove(neighbor);
+                        break;
+                    }
+                }
+                s.put("neighbors", neighbors);
+                graph.update(old, s);
+            }
+            graph.remove(foundIncomings);
+        }
+
+        // remove key container document
+        deleteNodeKey(oID);
     }
 
     @Override
@@ -193,6 +250,13 @@ class MongoStorage implements GraphStorage {
             return obj.get("_id");
         }
         return found.get("_id");
+    }
+
+    private void deleteNodeKey(Object nodeKeyRaw) {
+        BasicDBObject example = new BasicDBObject();
+        example.put("_id", nodeKeyRaw);
+        example.put("graphId", graphId);
+        graph.remove(example);
     }
 
     private NodeKey getNodeKey(Object nodeKeyRaw) {
