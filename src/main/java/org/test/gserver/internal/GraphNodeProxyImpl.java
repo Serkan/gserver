@@ -21,9 +21,15 @@ class GraphNodeProxyImpl extends GraphNode {
 	private final GraphStorage storage;
 
 	protected GraphNodeProxyImpl(NodeKey key, GraphStorage storage) {
+		this(key, storage, true);
+	}
+
+	protected GraphNodeProxyImpl(NodeKey key, GraphStorage storage, boolean isNew) {
 		super(key);
 		this.storage = storage;
-		storage.createNodeIfNotExist(key);
+		if (isNew) {
+			storage.createNodeIfNotExist(key);
+		}
 	}
 
 	@Override

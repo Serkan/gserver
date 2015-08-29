@@ -13,8 +13,21 @@ public class NodeKey extends LinkedHashMap<String, String> {
 		}
 	}
 
-	public NodeKey(String type) {
+	@Override
+	public String put(String key, String value) {
+		if (value == null) {
+			return null;
+		}
+		return super.put(key, value);
+	}
+
+	public NodeKey(String type, Pair<String, String>... attr) {
 		put("type", type);
+		if (attr != null && attr.length > 0) {
+			for (Pair<String, String> pair : attr) {
+				this.put(pair.getFirst(), pair.getSecond());
+			}
+		}
 	}
 
 	public String getType() {

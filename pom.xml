@@ -4,7 +4,7 @@
 
     <groupId>org.test</groupId>
     <artifactId>gserver</artifactId>
-    <version>1.0</version>
+    <version>2.4.0</version>
     <packaging>jar</packaging>
 
     <name>gserver</name>
@@ -31,9 +31,14 @@
             <version>2.4</version>
         </dependency>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.6</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.1</version>
+            <version>4.11</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -64,12 +69,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <distributionManagement>
-        <repository>
-            <id>Masak Repository</id>
-            <name>Project Releases</name>
-            <url>http://bim.masak.net.tr:8081/nexus/content/repositories/thirdparty/</url>
-        </repository>
-    </distributionManagement>
 </project>
