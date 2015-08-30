@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.test.gserver.GraphLockTimeOutException;
 import org.test.gserver.NodeKey;
 import org.test.gserver.Pair;
+import org.test.gserver.internal.locking.LockManagerImpl;
 
 import java.util.UUID;
 
@@ -27,10 +28,10 @@ public class LockManagerTest {
 
 		String graphId = UUID.randomUUID().toString();
 
-		LockManager lockManager = new LockManagerImpl(new DocumentStorageLockSupport(graphId));
+		LockManager lockManager = new LockManagerImpl(new GraphStorageLockSupport(graphId, ));
 		lockManager.lock(key);
 
-		lockManager = new LockManagerImpl(new DocumentStorageLockSupport(graphId), new LockOwnerProvider() {
+		lockManager = new LockManagerImpl(new GraphStorageLockSupport(graphId), new LockOwnerProvider() {
 
 			@Override
 			public String getOwner() {
@@ -46,13 +47,13 @@ public class LockManagerTest {
 
 		String graphId = UUID.randomUUID().toString();
 
-		LockManager lockManager = new LockManagerImpl(new DocumentStorageLockSupport(graphId));
+		LockManager lockManager = new LockManagerImpl(new GraphStorageLockSupport(graphId));
 		lockManager.lock(key);
 		// do some work and release lock
 		lockManager.release(key);
 
 		// different lock manager to acquire lock as different owner
-		lockManager = new LockManagerImpl(new DocumentStorageLockSupport(graphId), new LockOwnerProvider() {
+		lockManager = new LockManagerImpl(new GraphStorageLockSupport(graphId), new LockOwnerProvider() {
 
 			@Override
 			public String getOwner() {
@@ -69,14 +70,14 @@ public class LockManagerTest {
 		NodeKey key = new NodeKey("TYPE_P", new Pair<>("id", "1111111111"));
 		String graphId = UUID.randomUUID().toString();
 		{
-			LockManager lockManager = new LockManagerImpl(new DocumentStorageLockSupport(graphId));
+			LockManager lockManager = new LockManagerImpl(new GraphStorageLockSupport(graphId));
 			lockManager.lock(key, 1);
 		}
 		// wait it to expire
 		Thread.currentThread().sleep(1);
 		// try acquire lock
 		{
-			LockManager lockManager = new LockManagerImpl(new DocumentStorageLockSupport(graphId), new LockOwnerProvider() {
+			LockManager lockManager = new LockManagerImpl(new GraphStorageLockSupport(graphId), new LockOwnerProvider() {
 
 				@Override
 				public String getOwner() {
