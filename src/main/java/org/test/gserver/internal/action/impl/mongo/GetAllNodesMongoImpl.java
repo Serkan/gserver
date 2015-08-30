@@ -1,21 +1,26 @@
 package org.test.gserver.internal.action.impl.mongo;
 
 import org.test.gserver.GraphNode;
+import org.test.gserver.NodeKey;
+import org.test.gserver.internal.GraphNodeProxyImpl;
 import org.test.gserver.internal.action.GetAllNodesAction;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by serkan on 30.08.2015.
  */
-public class GetAllNodesMongoImpl implements GetAllNodesAction {
-
+public class GetAllNodesMongoImpl extends AbstractMongoAction implements GetAllNodesAction {
 
     private String graphId;
 
     @Override
     public void configure(Object... params) {
-        graphId = (String) params[0];
+        loadGraphIdFromParams(params);
+        graphId = (String) params[1];
     }
 
     @Override
@@ -24,11 +29,27 @@ public class GetAllNodesMongoImpl implements GetAllNodesAction {
             throw new NullPointerException("GraphId must be given via " +
                     "configure method before the execution");
         }
-        return null;
+        Map<String, Object> document = new HashMap<>();
+        document.put("graphId", graphId);
+        document.put("documentType", "node");
+        document.put("isActive", true);
+
+        List<Map<String, Object>> result = documentDAO.find(document);
+
+        List<GraphNode> nodes = new LinkedList<>();
+        for (Map<String, Object> next : result) {
+            Object nodeKeyRaw = next.get("key");
+
+            NodeKey nodeKey = getNodeKey(nodeKeyRaw);
+            GraphNode node = new GraphNodeProxyImpl(nodeKey, this, false);
+
+            nodes.add(node);
+        }
+        return nodes;
     }
 
     @Override
     public void undo() {
-
+        // do nothing
     }
 }

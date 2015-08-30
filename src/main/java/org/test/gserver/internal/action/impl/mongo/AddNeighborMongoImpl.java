@@ -19,7 +19,7 @@ public class AddNeighborMongoImpl extends AbstractMongoAction implements AddNeig
 
     @Override
     public void configure(Object... params) {
-
+        loadGraphIdFromParams(params);
         sourceKey = (NodeKey) params[1];
         target = (GraphNode) params[2];
         attr = (Map<String, String>) params[3];
@@ -33,6 +33,11 @@ public class AddNeighborMongoImpl extends AbstractMongoAction implements AddNeig
             throw new NullPointerException("None of the parameters " +
                     "(source NodeKey, target GraphNode, " +
                     "edge attributes) can not be null");
+        }
+        // check if exist
+        if (!existEdge(sourceKey, target.getKey(), attr)) {
+            // create edge
+            createEdge(sourceKey, target.getKey(), attr);
         }
         return null;
     }

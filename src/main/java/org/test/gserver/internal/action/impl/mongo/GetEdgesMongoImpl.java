@@ -1,15 +1,20 @@
 package org.test.gserver.internal.action.impl.mongo;
 
 import org.test.gserver.GraphEdge;
+import org.test.gserver.GraphNode;
 import org.test.gserver.NodeKey;
+import org.test.gserver.internal.GraphNodeProxyImpl;
 import org.test.gserver.internal.action.GetEdgesAction;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by serkan on 30.08.2015.
  */
-public class GetEdgesMongoImpl implements GetEdgesAction {
+public class GetEdgesMongoImpl extends AbstractMongoAction implements GetEdgesAction {
 
     private NodeKey source;
 
@@ -17,8 +22,9 @@ public class GetEdgesMongoImpl implements GetEdgesAction {
 
     @Override
     public void configure(Object... params) {
-        source = (NodeKey) params[0];
-        target = (NodeKey) params[1];
+        loadGraphIdFromParams(params);
+        source = (NodeKey) params[1];
+        target = (NodeKey) params[2];
     }
 
     @Override
@@ -27,11 +33,38 @@ public class GetEdgesMongoImpl implements GetEdgesAction {
                 || target == null) {
             throw new NullPointerException("Source and target keys must be given before execution");
         }
-        return null;
+        Object sourceObjId = createOrGetKeyDocumentAndGetId(source);
+        Object targetObjId = createOrGetKeyDocumentAndGetId(target);
+
+        Map<String, Object> edgeExample = new HashMap<>();
+        edgeExample.put("documentType", "edge");
+        edgeExample.put("graphId", getGraphId());
+        edgeExample.put("isActive", true);
+        edgeExample.put("source", sourceObjId);
+        edgeExample.put("target", targetObjId);
+
+        List<Map<String, Object>> edges = documentDAO.find(edgeExample);
+
+        if (edges.size() == 0) {
+            return null;
+        }
+        List<GraphEdge> result = new LinkedList<>();
+        for (Map<String, Object> e : edges) {
+            NodeKey sourceKey = getNodeKey(e.get("source"));
+            NodeKey targetKey = getNodeKey(e.get("target"));
+            Object attr = e.get("attr");
+
+            GraphNode sourceNode = new GraphNodeProxyImpl(sourceKey, this, false);
+            GraphNode targetNode = new GraphNodeProxyImpl(targetKey, this, false);
+
+            GraphEdge edge = new GraphEdge(sourceNode, targetNode, (Map<String, String>) attr);
+            result.add(edge);
+        }
+        return result;
     }
 
     @Override
     public void undo() {
-
+        // do nothing
     }
 }

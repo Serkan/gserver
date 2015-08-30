@@ -3,12 +3,13 @@ package org.test.gserver.internal.action.impl.mongo;
 import org.test.gserver.NodeKey;
 import org.test.gserver.internal.action.PutAttrAction;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by serkan on 3class0.08.2015.
  */
-public class PutAttrMongoImpl implements PutAttrAction {
+public class PutAttrMongoImpl extends AbstractMongoAction implements PutAttrAction {
 
     private NodeKey nodeKey;
 
@@ -16,8 +17,9 @@ public class PutAttrMongoImpl implements PutAttrAction {
 
     @Override
     public void configure(Object... params) {
-        nodeKey = (NodeKey) params[0];
-        attr = (Map<String, String>) params[1];
+        loadGraphIdFromParams(params);
+        nodeKey = (NodeKey) params[1];
+        attr = (Map<String, String>) params[2];
     }
 
     @Override
@@ -26,6 +28,17 @@ public class PutAttrMongoImpl implements PutAttrAction {
                 || attr == null) {
             throw new NullPointerException("None of the parameters can not be null");
         }
+        Map<String, Object> document = new HashMap<>();
+        document.put("graphId", getGraphId());
+        document.put("documentType", "node");
+        document.put("isActive", true);
+        Object oID = createOrGetKeyDocumentAndGetId(nodeKey);
+        document.put("key", oID);
+        Map<String, Object> old = documentDAO.findOne(document);
+        Map<String, Object> next = copyDocument(old);
+        // TODO (serkan) attr must be append not overwrite
+        next.put("attr", attr);
+        documentDAO.update(old, next);
         return null;
     }
 

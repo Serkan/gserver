@@ -1,21 +1,27 @@
 package org.test.gserver.internal.action.impl.mongo;
 
 import org.test.gserver.GraphEdge;
+import org.test.gserver.GraphNode;
 import org.test.gserver.NodeKey;
+import org.test.gserver.Pair;
+import org.test.gserver.internal.GraphNodeProxyImpl;
 import org.test.gserver.internal.action.GetNeighborsAction;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by serkan on 30.08.2015.
  */
-public class GetNeighborsMongoImpl implements GetNeighborsAction {
+public class GetNeighborsMongoImpl extends AbstractMongoAction implements GetNeighborsAction {
 
     private NodeKey nodeKey;
 
     @Override
     public void configure(Object... params) {
-        nodeKey = (NodeKey) params[0];
+        loadGraphIdFromParams(params);
+        nodeKey = (NodeKey) params[1];
     }
 
     @Override
@@ -23,11 +29,23 @@ public class GetNeighborsMongoImpl implements GetNeighborsAction {
         if (nodeKey == null) {
             throw new NullPointerException("NodeKey can not be null before execution.");
         }
-        return null;
+        List<Pair<NodeKey, Map<String, String>>> outgoingList = getOutgoingList(nodeKey);
+        if (outgoingList.size() != 0) {
+            List<GraphEdge> result = new LinkedList<>();
+            for (Pair<NodeKey, Map<String, String>> nodeKeyMapPair : outgoingList) {
+                GraphNode targetNode = new GraphNodeProxyImpl(nodeKeyMapPair.getFirst(), this, false);
+                GraphNode sourceNode = new GraphNodeProxyImpl(nodeKey, this, false);
+                GraphEdge edge = new GraphEdge(sourceNode, targetNode, nodeKeyMapPair.getSecond());
+                result.add(edge);
+            }
+            return result;
+        } else {
+            return null;
+        }
     }
 
     @Override
     public void undo() {
-
+        // do nothing
     }
 }

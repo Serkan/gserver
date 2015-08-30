@@ -16,45 +16,45 @@ import java.util.Map;
  *
  * @author serkan
  */
-class GraphNodeProxyImpl extends GraphNode {
+public class GraphNodeProxyImpl extends GraphNode {
 
-	private final GraphStorage storage;
+    private final GraphStorage storage;
 
-	protected GraphNodeProxyImpl(NodeKey key, GraphStorage storage) {
-		this(key, storage, true);
-	}
+    protected GraphNodeProxyImpl(NodeKey key, GraphStorage storage) {
+        this(key, storage, true);
+    }
 
-	protected GraphNodeProxyImpl(NodeKey key, GraphStorage storage, boolean isNew) {
-		super(key);
-		this.storage = storage;
-		if (isNew) {
-			storage.createNodeIfNotExist(key);
-		}
-	}
+    public GraphNodeProxyImpl(NodeKey key, GraphStorage storage, boolean isNew) {
+        super(key);
+        this.storage = storage;
+        if (isNew) {
+            storage.createNodeIfNotExist(key);
+        }
+    }
 
-	@Override
-	public void addNeighbor(GraphNode target, Map<String, String> attr) {
-		storage.addNeighbor(getKey(), target, attr);
-	}
+    @Override
+    public void addNeighbor(GraphNode target, Map<String, String> attr) {
+        storage.addNeighbor(getKey(), target, attr);
+    }
 
-	@Override
-	public List<GraphEdge> getNeighbors() {
-		List<GraphEdge> neighbors = storage.getNeighbors(getKey());
-		if (neighbors != null && neighbors.size() > 0) {
-			return Collections.unmodifiableList(neighbors);
-		} else {
-			return Collections.emptyList();
-		}
-	}
+    @Override
+    public List<GraphEdge> getNeighbors() {
+        List<GraphEdge> neighbors = storage.getNeighbors(getKey());
+        if (neighbors != null && neighbors.size() > 0) {
+            return Collections.unmodifiableList(neighbors);
+        } else {
+            return Collections.emptyList();
+        }
+    }
 
-	@Override
-	public void putAttr(Map<String, String> attr) {
-		storage.putAttr(getKey(), attr);
-	}
+    @Override
+    public void putAttr(Map<String, String> attr) {
+        storage.putAttr(getKey(), attr);
+    }
 
-	@Override
-	public Map<String, String> gettAttr() {
-		return storage.getAttr(getKey());
-	}
+    @Override
+    public Map<String, String> gettAttr() {
+        return storage.getAttr(getKey());
+    }
 
 }

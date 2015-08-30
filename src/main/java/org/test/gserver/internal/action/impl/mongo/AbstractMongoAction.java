@@ -21,6 +21,14 @@ public abstract class AbstractMongoAction {
     protected DocumentDAO documentDAO = new MongoDAO();
 
 
+    protected void loadGraphIdFromParams(Object... params) {
+        graphId = (String) params[0];
+    }
+
+    protected String getGraphId() {
+        return graphId;
+    }
+
     protected void createEdge(NodeKey source, NodeKey target, Map<String, String> attr) {
         Map<String, Object> edge = new HashMap<>();
         edge.put("documentType", "edge");
