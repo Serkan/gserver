@@ -33,6 +33,20 @@ public class GraphActionFactoryMongo implements GraphActionFactory {
                 return new GetAttrMongoImpl();
             case GET_EDGES:
                 return new GetEdgesMongoImpl();
+            case GRAPH_EXIST:
+                return new GraphExistMongoImpl();
+            case CREATE_GRAPH:
+                return new CreateGraphMongoImpl();
+            case CREATE_INDEX:
+                return new CreateIndexMongoImpl();
+            case ACQUIRE_LOCK:
+                return new AcquireLockMongoImpl();
+            case RELEASE_LOCK:
+                return new ReleaseLockMongoImpl();
+            case GET_NEIGHBORS:
+                return new GetNeighborsMongoImpl();
+            case NODE_SIZE:
+                return new NodeSizeMongoImpl();
             default:
                 throw new IllegalArgumentException("Wrong action type");
         }

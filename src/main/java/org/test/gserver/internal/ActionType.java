@@ -16,5 +16,10 @@ public enum ActionType {
     GET_NODE_ATTR,
     GET_NEIGHBORS,
     GET_EDGES,
-    NODE_SIZE
+    NODE_SIZE,
+    GRAPH_EXIST,
+    CREATE_GRAPH,
+    CREATE_INDEX,
+    ACQUIRE_LOCK,
+    RELEASE_LOCK
 }

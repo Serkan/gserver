@@ -21,7 +21,7 @@ public class CreateOrGetNodeMongoImpl extends AbstractMongoAction implements Cre
     }
 
     @Override
-    public GraphNode execute() {
+    public Void execute() {
         if (nodeKey == null) {
             throw new NullPointerException("NodeKey must be given with " +
                     "configure method before the execution");
@@ -36,6 +36,7 @@ public class CreateOrGetNodeMongoImpl extends AbstractMongoAction implements Cre
         if (documentDAO.count(document) < 1) {
             documentDAO.save(document);
         }
+        return null;
     }
 
     @Override

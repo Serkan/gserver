@@ -1,10 +1,6 @@
 package org.test.gserver.internal;
 
-import org.test.gserver.Graph;
-import org.test.gserver.GraphEdge;
-import org.test.gserver.GraphNode;
-import org.test.gserver.NodeKey;
-import org.test.gserver.Visitor;
+import org.test.gserver.*;
 import org.test.gserver.internal.action.impl.GraphActionFactoryMongo;
 
 import java.util.HashSet;
@@ -32,7 +28,7 @@ public final class GFactory {
      * @return Concrete graph impl
      */
     public static Graph get(String id) {
-        return new GraphImpl(id, new DocumentStorage(id));
+        return new GraphImpl(id, new GraphStorageHistorySupport(id, new GraphActionFactoryMongo()));
     }
 
     public static Graph getWithLockSupport(String id) {

@@ -2,6 +2,7 @@ package org.test.gserver.internal.action.impl.mongo;
 
 import org.test.gserver.GraphEdge;
 import org.test.gserver.GraphNode;
+import org.test.gserver.GraphStorage;
 import org.test.gserver.NodeKey;
 import org.test.gserver.internal.GraphNodeProxyImpl;
 import org.test.gserver.internal.action.GetEdgesAction;
@@ -17,14 +18,15 @@ import java.util.Map;
 public class GetEdgesMongoImpl extends AbstractMongoAction implements GetEdgesAction {
 
     private NodeKey source;
-
     private NodeKey target;
+    private GraphStorage storage;
 
     @Override
     public void configure(Object... params) {
         loadGraphIdFromParams(params);
         source = (NodeKey) params[1];
         target = (NodeKey) params[2];
+        storage = (GraphStorage) params[3];
     }
 
     @Override
@@ -54,8 +56,8 @@ public class GetEdgesMongoImpl extends AbstractMongoAction implements GetEdgesAc
             NodeKey targetKey = getNodeKey(e.get("target"));
             Object attr = e.get("attr");
 
-            GraphNode sourceNode = new GraphNodeProxyImpl(sourceKey, this, false);
-            GraphNode targetNode = new GraphNodeProxyImpl(targetKey, this, false);
+            GraphNode sourceNode = new GraphNodeProxyImpl(sourceKey, storage, false);
+            GraphNode targetNode = new GraphNodeProxyImpl(targetKey, storage, false);
 
             GraphEdge edge = new GraphEdge(sourceNode, targetNode, (Map<String, String>) attr);
             result.add(edge);

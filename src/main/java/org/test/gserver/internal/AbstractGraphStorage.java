@@ -2,6 +2,7 @@ package org.test.gserver.internal;
 
 import org.test.gserver.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,12 +14,22 @@ import static org.test.gserver.internal.ActionType.*;
 public abstract class AbstractGraphStorage implements GraphStorage {
 
     private final String graphId;
-
     private final GraphActionFactory actionFactory;
 
     public AbstractGraphStorage(String graphId, GraphActionFactory actionFactory) {
+        // you must set graph id before everything because storage highly dependent on graphId
         this.graphId = graphId;
         this.actionFactory = actionFactory;
+        // ensure graph is exist in storage
+        Boolean graphExist = delegate(GRAPH_EXIST);
+        if (!graphExist) {
+            delegate(CREATE_GRAPH);
+        }
+        // ensure indexes
+        Map<String, Object> document = new HashMap<>();
+        document.put("graphId", 1);
+        document.put("key", 1);
+        delegate(CREATE_INDEX, document);
     }
 
     protected <T> T lookup(ActionType type) {
@@ -38,12 +49,12 @@ public abstract class AbstractGraphStorage implements GraphStorage {
 
     @Override
     public List<GraphNode> nodes() {
-        return delegate(GET_ALL_NODES);
+        return delegate(GET_ALL_NODES, this);
     }
 
     @Override
     public List<GraphEdge> edges() {
-        return delegate(GET_ALL_EDGES);
+        return delegate(GET_ALL_EDGES, this);
     }
 
     @Override
@@ -68,12 +79,12 @@ public abstract class AbstractGraphStorage implements GraphStorage {
 
     @Override
     public List<GraphEdge> getNeighbors(NodeKey key) {
-        return delegate(GET_NEIGHBORS, key);
+        return delegate(GET_NEIGHBORS, key, this);
     }
 
     @Override
     public List<GraphEdge> getEdges(NodeKey source, NodeKey target) {
-        return delegate(GET_EDGES, source, target);
+        return delegate(GET_EDGES, source, target, this);
     }
 
     @Override

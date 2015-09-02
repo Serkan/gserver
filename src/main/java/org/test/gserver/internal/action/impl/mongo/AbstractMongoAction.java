@@ -150,21 +150,4 @@ public abstract class AbstractMongoAction {
         return newObj;
     }
 
-    protected void createGraph() {
-        Map<String, Object> document = new HashMap<>();
-        document.put("graphId", graphId);
-        document.put("documentType", "header");
-        document.put("currentVersion", 0);
-        document.put("lastVersion", 0);
-        document.put("txFlag", false);
-        documentDAO.save(document);
-    }
-
-    protected boolean graphExists() {
-        Map<String, Object> document = new HashMap<>();
-        document.put("graphId", graphId);
-        document.put("documentType", "header");
-        return documentDAO.count(document) != 0;
-    }
-
 }

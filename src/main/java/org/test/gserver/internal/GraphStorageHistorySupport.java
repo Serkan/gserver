@@ -1,13 +1,10 @@
 package org.test.gserver.internal;
 
-import org.test.gserver.*;
+import org.test.gserver.GraphAction;
+import org.test.gserver.NodeKey;
 import org.test.gserver.internal.action.CheckPointAction;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Stack;
-
-import static org.test.gserver.internal.ActionType.*;
 
 /**
  * Created by serkan on 29.08.2015.
@@ -15,7 +12,6 @@ import static org.test.gserver.internal.ActionType.*;
 class GraphStorageHistorySupport extends AbstractGraphStorage {
 
     private final static Stack<GraphAction> undoStack = new Stack<>();
-
     private final static Stack<GraphAction> redoStack = new Stack<>();
 
     public GraphStorageHistorySupport(String graphId, GraphActionFactory actionFactory) {
@@ -25,7 +21,10 @@ class GraphStorageHistorySupport extends AbstractGraphStorage {
     @Override
     protected <T> T delegate(ActionType actionType, Object... params) {
         GraphAction<T> action = lookup(actionType);
-        action.configure(getGraphId(), params);
+        Object[] fullParams = new Object[params.length + 1];
+        fullParams[0] = getGraphId();
+        System.arraycopy(params, 0, fullParams, 1, params.length);
+        action.configure(fullParams);
         // record every step in undo stack and clear redo stack to overwrite
         redoStack.clear();
         undoStack.push(action);

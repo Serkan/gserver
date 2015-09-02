@@ -6,5 +6,5 @@ import org.test.gserver.GraphNode;
 /**
  * Created by serkan on 30.08.2015.
  */
-public interface CreateOrGetNodeAction extends GraphAction<GraphNode> {
+public interface CreateOrGetNodeAction extends GraphAction<Void> {
 }

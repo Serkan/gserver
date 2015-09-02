@@ -1,6 +1,7 @@
 package org.test.gserver.internal.action.impl.mongo;
 
 import org.test.gserver.GraphNode;
+import org.test.gserver.GraphStorage;
 import org.test.gserver.NodeKey;
 import org.test.gserver.internal.GraphNodeProxyImpl;
 import org.test.gserver.internal.action.GetAllNodesAction;
@@ -15,22 +16,18 @@ import java.util.Map;
  */
 public class GetAllNodesMongoImpl extends AbstractMongoAction implements GetAllNodesAction {
 
-    private String graphId;
+    private GraphStorage storage;
 
     @Override
     public void configure(Object... params) {
         loadGraphIdFromParams(params);
-        graphId = (String) params[1];
+        storage = (GraphStorage) params[1];
     }
 
     @Override
     public List<GraphNode> execute() {
-        if (graphId == null) {
-            throw new NullPointerException("GraphId must be given via " +
-                    "configure method before the execution");
-        }
         Map<String, Object> document = new HashMap<>();
-        document.put("graphId", graphId);
+        document.put("graphId", getGraphId());
         document.put("documentType", "node");
         document.put("isActive", true);
 
@@ -41,7 +38,7 @@ public class GetAllNodesMongoImpl extends AbstractMongoAction implements GetAllN
             Object nodeKeyRaw = next.get("key");
 
             NodeKey nodeKey = getNodeKey(nodeKeyRaw);
-            GraphNode node = new GraphNodeProxyImpl(nodeKey, this, false);
+            GraphNode node = new GraphNodeProxyImpl(nodeKey, storage, false);
 
             nodes.add(node);
         }
