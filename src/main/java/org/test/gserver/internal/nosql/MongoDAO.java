@@ -145,6 +145,13 @@ public class MongoDAO implements DocumentDAO {
     }
 
     @Override
+    public Map<String, Object> findKeyFromDump(Map<String, Object> obj) {
+        BasicDBObject doc = new BasicDBObject(obj);
+        DBObject one = dump.findOne(doc);
+        return one != null ? one.toMap() : null;
+    }
+
+    @Override
     public void createIndex(Map<String, Object> document) {
         // TODO not implemented YET
     }

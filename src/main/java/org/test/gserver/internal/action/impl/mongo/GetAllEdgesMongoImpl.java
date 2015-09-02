@@ -30,7 +30,6 @@ public class GetAllEdgesMongoImpl extends AbstractMongoAction implements GetAllE
         Map<String, Object> edgeExample = new HashMap<>();
         edgeExample.put("documentType", "edge");
         edgeExample.put("graphId", getGraphId());
-        edgeExample.put("isActive", true);
         List<Map<String, Object>> edges = documentDAO.find(edgeExample);
 
         List<GraphEdge> result = new LinkedList<>();

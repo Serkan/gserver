@@ -28,7 +28,6 @@ public class GetAttrMongoImpl extends AbstractMongoAction implements GetAttrActi
         Map<String, Object> document = new HashMap<>();
         document.put("graphId", getGraphId());
         document.put("documentType", "node");
-        document.put("isActive", true);
         Object oID = createOrGetKeyDocumentAndGetId(nodeKey);
 
         document.put("key", oID);

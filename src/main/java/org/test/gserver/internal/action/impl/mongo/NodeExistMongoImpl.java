@@ -25,8 +25,11 @@ public class NodeExistMongoImpl extends AbstractMongoAction implements NodeExist
         document.put("graphId", getGraphId());
         document.put("documentType", "node");
         document.put("isRoot", true);
+        Object oidFromDump = createOrGetKeyDocumentAndGetIdFromDump(nodeKey);
+        if (oidFromDump != null) {
+            return false;
+        }
         Object oID = createOrGetKeyDocumentAndGetId(nodeKey);
-        document.put("isActive", true);
         document.put("key", oID);
         return documentDAO.count(document) > 0;
     }

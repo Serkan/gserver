@@ -41,7 +41,6 @@ public class GetEdgesMongoImpl extends AbstractMongoAction implements GetEdgesAc
         Map<String, Object> edgeExample = new HashMap<>();
         edgeExample.put("documentType", "edge");
         edgeExample.put("graphId", getGraphId());
-        edgeExample.put("isActive", true);
         edgeExample.put("source", sourceObjId);
         edgeExample.put("target", targetObjId);
 

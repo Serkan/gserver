@@ -19,7 +19,6 @@ public class NodeSizeMongoImpl extends AbstractMongoAction implements NodeSizeAc
     public Integer execute() {
         Map<String, Object> document = new HashMap<>();
         document.put("graphId", getGraphId());
-        document.put("isActive", true);
         return (int) documentDAO.countKeys(document);
     }
 

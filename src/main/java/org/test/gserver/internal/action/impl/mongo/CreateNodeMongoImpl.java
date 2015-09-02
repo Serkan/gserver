@@ -28,14 +28,14 @@ public class CreateNodeMongoImpl extends AbstractMongoAction implements CreateOr
 
         // in case of this one is a deleted node
         documentDAO.moveKeyFromDump(nodeKey);
-
+        Object oID = createOrGetKeyDocumentAndGetId(nodeKey);
         Map<String, Object> document = new HashMap<>();
         document.put("graphId", getGraphId());
+        document.put("key", oID);
+        documentDAO.moveFromDump(document);
+
         document.put("documentType", "node");
         document.put("isRoot", true);
-        Object oID = createOrGetKeyDocumentAndGetId(nodeKey);
-        document.put("isActive", true);
-        document.put("key", oID);
         documentDAO.save(document);
         return null;
     }

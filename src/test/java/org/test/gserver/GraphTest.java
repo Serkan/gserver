@@ -206,7 +206,6 @@ public class GraphTest {
         g.undo();
 
         assertEquals(0, g.nodeSize());
-        g.removeAll();
     }
 
     @Test
@@ -214,22 +213,20 @@ public class GraphTest {
         Graph g = GFactory.get(UUID.randomUUID().toString());
 
         //prepare node key
-        String pid = "11111111111";
-        NodeKey key = new NodeKey("TYPE_P");
-        key.put("PID", pid);
+        NodeKey key = new NodeKey("TYPE_P", new Pair<>("PID", "1111111111"));
 
         g.beginTx();
         g.createOrGetNode(key);
         g.commitTx();
 
         g.undo();
+        assertEquals(0, g.nodeSize());
 
         g.beginTx();
         g.createOrGetNode(key);
         g.commitTx();
 
         assertEquals(1, g.nodeSize());
-        g.removeAll();
     }
 
     @Test

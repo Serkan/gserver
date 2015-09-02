@@ -36,7 +36,6 @@ public abstract class AbstractMongoAction {
         edge.put("source", createOrGetKeyDocumentAndGetId(source));
         edge.put("target", createOrGetKeyDocumentAndGetId(target));
         edge.put("attr", attr);
-        edge.put("isActive", true);
         documentDAO.save(edge);
     }
 
@@ -46,7 +45,6 @@ public abstract class AbstractMongoAction {
         edge.put("graphId", graphId);
         edge.put("source", createOrGetKeyDocumentAndGetId(source));
         edge.put("target", createOrGetKeyDocumentAndGetId(target));
-        edge.put("isActive", true);
         edge.put("attr", attr);
         documentDAO.delete(edge);
     }
@@ -58,7 +56,6 @@ public abstract class AbstractMongoAction {
         edge.put("source", createOrGetKeyDocumentAndGetId(source));
         edge.put("target", createOrGetKeyDocumentAndGetId(target));
         edge.put("attr", attr);
-        edge.put("isActive", true);
         return documentDAO.count(edge) > 0;
     }
 
@@ -67,7 +64,6 @@ public abstract class AbstractMongoAction {
         exampleEdge.put("documentType", "edge");
         exampleEdge.put("graphId", graphId);
         exampleEdge.put("source", createOrGetKeyDocumentAndGetId(source));
-        exampleEdge.put("isActive", true);
         List<Map<String, Object>> edgeList = documentDAO.find(exampleEdge);
         List<Pair<NodeKey, Map<String, String>>> result = new LinkedList<>();
         for (Map<String, Object> edge : edgeList) {
@@ -84,9 +80,6 @@ public abstract class AbstractMongoAction {
     protected Object createOrGetKeyDocumentAndGetId(NodeKey key, boolean lookForActive) {
         Map<String, Object> obj = new HashMap<String, Object>(key);
         obj.put("graphId", graphId);
-        if (lookForActive) {
-            obj.put("isActive", true);
-        }
 
         Map<String, Object> found = documentDAO.findKey(obj);
         if (found == null) {
@@ -94,6 +87,14 @@ public abstract class AbstractMongoAction {
             return obj.get("_id");
         }
         return found.get("_id");
+    }
+
+    protected Object createOrGetKeyDocumentAndGetIdFromDump(NodeKey key) {
+        Map<String, Object> obj = new HashMap<String, Object>(key);
+        obj.put("graphId", graphId);
+
+        Map<String, Object> found = documentDAO.findKeyFromDump(obj);
+        return found == null ? null : found.get("_id");
     }
 
     protected void deleteNodeKey(Object nodeKeyRaw) {
@@ -110,9 +111,6 @@ public abstract class AbstractMongoAction {
     protected NodeKey getNodeKey(Object nodeKeyRaw, boolean lookForActive) {
         Map<String, Object> example = new HashMap<>();
         example.put("_id", nodeKeyRaw);
-        if (lookForActive) {
-            example.put("isActive", true);
-        }
         Map<String, Object> foundKey = documentDAO.findKey(example);
 
         NodeKey nodeKey = new NodeKey(foundKey.get("type").toString());
@@ -123,7 +121,6 @@ public abstract class AbstractMongoAction {
         nodeKey.remove("_id");
         nodeKey.remove("graphId");
         nodeKey.remove("documentType");
-        nodeKey.remove("isActive");
         nodeKey.remove("version");
         return nodeKey;
     }

@@ -43,4 +43,6 @@ public interface DocumentDAO {
     void moveKeyToDump(Map<String, String> nodeKey);
 
     void moveKeyFromDump(Map<String, String> document);
+
+    Map<String,Object> findKeyFromDump(Map<String, Object> obj);
 }

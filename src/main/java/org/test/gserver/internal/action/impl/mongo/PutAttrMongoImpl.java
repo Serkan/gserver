@@ -30,7 +30,6 @@ public class PutAttrMongoImpl extends AbstractMongoAction implements PutAttrActi
         Map<String, Object> document = new HashMap<>();
         document.put("graphId", getGraphId());
         document.put("documentType", "node");
-        document.put("isActive", true);
         Object oID = createOrGetKeyDocumentAndGetId(nodeKey);
         document.put("key", oID);
         Map<String, Object> old = documentDAO.findOne(document);
@@ -46,7 +45,6 @@ public class PutAttrMongoImpl extends AbstractMongoAction implements PutAttrActi
         Map<String, Object> document = new HashMap<>();
         document.put("graphId", getGraphId());
         document.put("documentType", "node");
-        document.put("isActive", true);
         Object oID = createOrGetKeyDocumentAndGetId(nodeKey);
         document.put("key", oID);
         Map<String, Object> old = documentDAO.findOne(document);

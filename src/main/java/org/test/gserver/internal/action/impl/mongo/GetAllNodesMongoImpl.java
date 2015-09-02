@@ -29,7 +29,6 @@ public class GetAllNodesMongoImpl extends AbstractMongoAction implements GetAllN
         Map<String, Object> document = new HashMap<>();
         document.put("graphId", getGraphId());
         document.put("documentType", "node");
-        document.put("isActive", true);
 
         List<Map<String, Object>> result = documentDAO.find(document);
 
