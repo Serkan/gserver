@@ -58,8 +58,6 @@ public class GraphNodeTest {
 
 		assertEquals(1, n1.getNeighbors().size());
 
-		// clean up
-		g.removeAll();
 	}
 
 	@Test
@@ -86,8 +84,6 @@ public class GraphNodeTest {
 		GraphNode target = neighbor.getTarget();
 		assertEquals(k2, target.getKey());
 
-		// clean up
-		g.removeAll();
 	}
 
 	@Test
@@ -113,8 +109,6 @@ public class GraphNodeTest {
 
 		assertEquals("TWISTED", neighbor.getAttr().get("RELATION"));
 
-		// clean up
-		g.removeAll();
 	}
 
 	@Test

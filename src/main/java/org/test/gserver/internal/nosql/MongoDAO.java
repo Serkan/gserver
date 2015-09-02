@@ -1,11 +1,6 @@
 package org.test.gserver.internal.nosql;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoException;
+import com.mongodb.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +16,6 @@ import java.util.Properties;
 public class MongoDAO implements DocumentDAO {
 
     private static final String HOST;
-
     private static final int PORT;
 
     // load configuration
@@ -38,17 +32,16 @@ public class MongoDAO implements DocumentDAO {
     }
 
     private final DBCollection graph;
-
     private final DBCollection locks;
-
     private final DBCollection keys;
-
+    private final DBCollection dump;
     private MongoClient mongoClient;
 
     public MongoDAO() {
         try {
             mongoClient = new MongoClient(HOST, PORT);
             graph = mongoClient.getDB("graph").getCollection("visia");
+            dump = mongoClient.getDB("graph").getCollection("dump");
             locks = mongoClient.getDB("graph").getCollection("lockcollection");
             keys = mongoClient.getDB("graph").getCollection("keycollection");
 
@@ -109,6 +102,53 @@ public class MongoDAO implements DocumentDAO {
             result.add(next.toMap());
         }
         return result;
+    }
+
+    @Override
+    public void moveToDump(Map<String, Object> document) {
+        DBCursor cursor = graph.find(new BasicDBObject(document));
+        while (cursor.hasNext()) {
+            DBObject next = cursor.next();
+            graph.remove(next);
+            dump.save(next);
+        }
+    }
+
+    @Override
+    public void moveFromDump(Map<String, Object> document) {
+        DBCursor cursor = dump.find(new BasicDBObject(document));
+        while (cursor.hasNext()) {
+            DBObject next = cursor.next();
+            dump.remove(next);
+            graph.save(next);
+        }
+    }
+
+    @Override
+    public void moveKeyToDump(Map<String, String> document) {
+        DBCursor cursor = keys.find(new BasicDBObject(document));
+        while (cursor.hasNext()) {
+            DBObject next = cursor.next();
+            keys.remove(next);
+            dump.save(next);
+        }
+    }
+
+    @Override
+    public void moveKeyFromDump(Map<String, String> document) {
+        DBCursor cursor = dump.find(new BasicDBObject(document));
+        while (cursor.hasNext()) {
+            DBObject next = cursor.next();
+            dump.remove(next);
+            keys.save(next);
+        }
+    }
+
+    @Override
+    public Map<String, Object> findKeyFromDump(Map<String, Object> obj) {
+        BasicDBObject doc = new BasicDBObject(obj);
+        DBObject one = dump.findOne(doc);
+        return one != null ? one.toMap() : null;
     }
 
     @Override
@@ -177,4 +217,6 @@ public class MongoDAO implements DocumentDAO {
         BasicDBObject n = new BasicDBObject(d2);
         keys.update(o, n);
     }
+
+
 }

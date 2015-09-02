@@ -1,10 +1,12 @@
-package org.test.gserver.internal;
+package org.test.gserver.internal.locking;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.test.gserver.GraphLockTimeOutException;
 import org.test.gserver.GraphStorage;
 import org.test.gserver.NodeKey;
+import org.test.gserver.internal.LockManager;
+import org.test.gserver.internal.LockOwnerProvider;
 
 import java.util.concurrent.locks.LockSupport;
 

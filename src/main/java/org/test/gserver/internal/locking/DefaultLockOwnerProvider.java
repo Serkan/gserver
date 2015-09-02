@@ -1,4 +1,6 @@
-package org.test.gserver.internal;
+package org.test.gserver.internal.locking;
+
+import org.test.gserver.internal.LockOwnerProvider;
 
 import java.lang.management.ManagementFactory;
 
