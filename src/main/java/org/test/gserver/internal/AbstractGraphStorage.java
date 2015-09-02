@@ -48,6 +48,11 @@ public abstract class AbstractGraphStorage implements GraphStorage {
     }
 
     @Override
+    public boolean nodeExist(NodeKey key) {
+        return delegate(NODE_EXIST, key);
+    }
+
+    @Override
     public List<GraphNode> nodes() {
         return delegate(GET_ALL_NODES, this);
     }
@@ -68,8 +73,8 @@ public abstract class AbstractGraphStorage implements GraphStorage {
     }
 
     @Override
-    public void createNodeIfNotExist(NodeKey key) {
-        delegate(CREATE_OR_GET_NODE, key);
+    public void createNode(NodeKey key) {
+        delegate(CREATE_NODE, key);
     }
 
     @Override

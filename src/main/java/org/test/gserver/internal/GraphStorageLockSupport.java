@@ -33,13 +33,13 @@ class GraphStorageLockSupport extends AbstractGraphStorage {
     }
 
     @Override
-    public void createNodeIfNotExist(NodeKey key) {
+    public void createNode(NodeKey key) {
         try {
             lockManager.lock(key);
         } catch (GraphLockTimeOutException e) {
             throw new RuntimeException(e);
         }
-        this.createNodeIfNotExist(key);
+        this.createNode(key);
         lockManager.release(key);
     }
 

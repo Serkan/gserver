@@ -12,7 +12,6 @@ import java.util.Map;
 public class PutAttrMongoImpl extends AbstractMongoAction implements PutAttrAction {
 
     private NodeKey nodeKey;
-
     private Map<String, String> attr;
 
     @Override
@@ -44,6 +43,16 @@ public class PutAttrMongoImpl extends AbstractMongoAction implements PutAttrActi
 
     @Override
     public void undo() {
-
+        Map<String, Object> document = new HashMap<>();
+        document.put("graphId", getGraphId());
+        document.put("documentType", "node");
+        document.put("isActive", true);
+        Object oID = createOrGetKeyDocumentAndGetId(nodeKey);
+        document.put("key", oID);
+        Map<String, Object> old = documentDAO.findOne(document);
+        Map<String, Object> next = copyDocument(old);
+        // TODO (serkan) attr must be append not overwrite
+        next.put("attr", new HashMap<>()); // overwrite blank attribute list
+        documentDAO.update(old, next);
     }
 }

@@ -28,7 +28,7 @@ public class GraphNodeProxyImpl extends GraphNode {
         super(key);
         this.storage = storage;
         if (isNew) {
-            storage.createNodeIfNotExist(key);
+            storage.createNode(key);
         }
     }
 

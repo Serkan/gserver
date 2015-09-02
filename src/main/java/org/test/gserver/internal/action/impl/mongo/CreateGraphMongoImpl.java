@@ -28,6 +28,6 @@ public class CreateGraphMongoImpl extends AbstractMongoAction implements CreateG
 
     @Override
     public void undo() {
-
+        // nothing to do
     }
 }

@@ -19,8 +19,8 @@ public class GraphActionFactoryMongo implements GraphActionFactory {
                 return new GetAllEdgesMongoImpl();
             case GET_ROOTS:
                 return null;
-            case CREATE_OR_GET_NODE:
-                return new CreateOrGetNodeMongoImpl();
+            case CREATE_NODE:
+                return new CreateNodeMongoImpl();
             case REMOVE_NODE:
                 return new RemoveNodeMongoImpl();
             case ADD_EDGE:
@@ -47,6 +47,8 @@ public class GraphActionFactoryMongo implements GraphActionFactory {
                 return new GetNeighborsMongoImpl();
             case NODE_SIZE:
                 return new NodeSizeMongoImpl();
+            case NODE_EXIST:
+                return new NodeExistMongoImpl();
             default:
                 throw new IllegalArgumentException("Wrong action type");
         }

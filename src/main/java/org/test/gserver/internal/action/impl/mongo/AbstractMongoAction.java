@@ -40,21 +40,14 @@ public abstract class AbstractMongoAction {
         documentDAO.save(edge);
     }
 
-    protected void removeOutgoingEdges(NodeKey source) {
+    protected void deleteEdge(NodeKey source, NodeKey target, Map<String, String> attr) {
         Map<String, Object> edge = new HashMap<>();
         edge.put("documentType", "edge");
         edge.put("graphId", graphId);
         edge.put("source", createOrGetKeyDocumentAndGetId(source));
-        edge.put("isActive", true);
-        documentDAO.delete(edge);
-    }
-
-    protected void removeIncomingEdges(NodeKey target) {
-        Map<String, Object> edge = new HashMap<>();
-        edge.put("documentType", "edge");
-        edge.put("graphId", graphId);
         edge.put("target", createOrGetKeyDocumentAndGetId(target));
         edge.put("isActive", true);
+        edge.put("attr", attr);
         documentDAO.delete(edge);
     }
 

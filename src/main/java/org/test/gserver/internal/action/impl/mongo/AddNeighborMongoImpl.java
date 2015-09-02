@@ -12,9 +12,7 @@ import java.util.Map;
 public class AddNeighborMongoImpl extends AbstractMongoAction implements AddNeighborAction {
 
     private NodeKey sourceKey;
-
     private GraphNode target;
-
     private Map<String, String> attr;
 
     @Override
@@ -44,6 +42,6 @@ public class AddNeighborMongoImpl extends AbstractMongoAction implements AddNeig
 
     @Override
     public void undo() {
-
+        deleteEdge(sourceKey, target.getKey(), attr);
     }
 }

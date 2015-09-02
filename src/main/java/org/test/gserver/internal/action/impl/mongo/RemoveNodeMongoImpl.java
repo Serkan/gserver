@@ -29,18 +29,54 @@ public class RemoveNodeMongoImpl extends AbstractMongoAction implements RemoveNo
         document.put("documentType", "node");
         Object oID = createOrGetKeyDocumentAndGetId(nodeKey);
         document.put("key", oID);
-        documentDAO.delete(document);
+        documentDAO.moveToDump(document);
 
-        removeOutgoingEdges(nodeKey);
-        removeIncomingEdges(nodeKey);
+        // outgoing edges
+        Map<String, Object> edge = new HashMap<>();
+        edge.put("documentType", "edge");
+        edge.put("graphId", getGraphId());
+        edge.put("source", createOrGetKeyDocumentAndGetId(nodeKey));
+        edge.put("isActive", true);
+        documentDAO.moveToDump(edge);
+        // incoming edges
+        edge.clear();
+        edge.put("documentType", "edge");
+        edge.put("graphId", getGraphId());
+        edge.put("target", createOrGetKeyDocumentAndGetId(nodeKey));
+        edge.put("isActive", true);
+        documentDAO.moveToDump(edge);
 
-        // remove key container document
-        deleteNodeKey(oID);
+        documentDAO.moveKeyToDump(nodeKey);
+
         return null;
     }
 
     @Override
     public void undo() {
 
+        Map<String, Object> document = new HashMap<>();
+        document.put("graphId", getGraphId());
+        document.put("documentType", "node");
+        Object oID = createOrGetKeyDocumentAndGetId(nodeKey);
+        document.put("key", oID);
+        documentDAO.moveFromDump(document);
+
+        // outgoing edges
+        Map<String, Object> edge = new HashMap<>();
+        edge.put("documentType", "edge");
+        edge.put("graphId", getGraphId());
+        edge.put("source", createOrGetKeyDocumentAndGetId(nodeKey));
+        edge.put("isActive", true);
+        documentDAO.moveFromDump(edge);
+        // incoming edges
+        edge.clear();
+        edge.put("documentType", "edge");
+        edge.put("graphId", getGraphId());
+        edge.put("target", createOrGetKeyDocumentAndGetId(nodeKey));
+        edge.put("isActive", true);
+        documentDAO.moveFromDump(edge);
+
+        documentDAO.moveKeyFromDump(nodeKey);
     }
+
 }

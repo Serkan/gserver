@@ -33,6 +33,6 @@ public class ReleaseLockMongoImpl extends AbstractMongoAction implements Release
 
     @Override
     public void undo() {
-
+        // nothing to do
     }
 }

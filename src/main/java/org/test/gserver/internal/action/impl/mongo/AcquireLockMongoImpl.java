@@ -43,6 +43,6 @@ public class AcquireLockMongoImpl extends AbstractMongoAction implements Acquire
 
     @Override
     public void undo() {
-
+        // nothing to do
     }
 }

@@ -2,20 +2,12 @@ package org.test.gserver.internal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.test.gserver.Graph;
-import org.test.gserver.GraphEdge;
-import org.test.gserver.GraphException;
-import org.test.gserver.GraphNode;
-import org.test.gserver.GraphStorage;
-import org.test.gserver.NodeKey;
-import org.test.gserver.Visitor;
+import org.test.gserver.*;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-
-import static org.test.gserver.GraphException.*;
 
 /**
  * Simple graph implantation, only supports directed graphs.
@@ -25,9 +17,7 @@ import static org.test.gserver.GraphException.*;
 class GraphImpl implements Graph {
 
     private String id;
-
     private GraphStorage storage;
-
     private Logger logger = LoggerFactory.getLogger(GraphImpl.class);
 
     public GraphImpl(String id, GraphStorage storage) {
@@ -37,7 +27,11 @@ class GraphImpl implements Graph {
 
     @Override
     public GraphNode createOrGetNode(NodeKey key) {
-        return new GraphNodeProxyImpl(key, storage);
+        if (!storage.nodeExist(key)) {
+            return new GraphNodeProxyImpl(key, storage);
+        } else {
+            return new GraphNodeProxyImpl(key, storage, false);
+        }
     }
 
     @Override

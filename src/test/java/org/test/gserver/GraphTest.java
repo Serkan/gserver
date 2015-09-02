@@ -192,18 +192,6 @@ public class GraphTest {
         g.commitTx();
     }
 
-    @Test(expected = GraphException.class)
-    public void testTxWithoutCtx() throws GraphException {
-        Graph g = GFactory.get(UUID.randomUUID().toString());
-
-        NodeKey k1 = new NodeKey("TYPE_P");
-        k1.put("PID", "1111111111");
-
-        g.createOrGetNode(k1);
-
-        g.commitTx();
-    }
-
     @Test
     public void testUndoWithOneNode() throws GraphException {
         Graph g = GFactory.get(UUID.randomUUID().toString());
@@ -274,12 +262,14 @@ public class GraphTest {
     public void testUndoWithExpandThreeSteps() throws GraphException {
         // step 1 add one node
         String graphId = UUID.randomUUID().toString();
+        NodeKey k1 = new NodeKey("TYPE_P", new Pair<>("PID", "1"));
+        NodeKey k2 = new NodeKey("TYPE_P", new Pair<>("PID", "2"));
+        NodeKey k3 = new NodeKey("TYPE_P", new Pair<>("PID", "3"));
+        NodeKey k4 = new NodeKey("TYPE_P", new Pair<>("PID", "4"));
         {
             Graph g = GFactory.get(graphId);
             g.beginTx();
-            String pid = "1";
-            NodeKey k1 = new NodeKey("TYPE_P");
-            k1.put("PID", pid);
+            // first creation of k1
             g.createOrGetNode(k1);
             g.commitTx();
         }
@@ -287,18 +277,10 @@ public class GraphTest {
         {
             Graph g = GFactory.get(graphId);
             g.beginTx();
-            String pid = "1";
-            NodeKey k1 = new NodeKey("TYPE_P");
-            k1.put("PID", pid);
             GraphNode n1 = g.createOrGetNode(k1);
 
-            String pid2 = "2";
-            NodeKey k2 = new NodeKey("TYPE_P");
-            k2.put("PID", pid2);
+            // first creation of k2 and k3
             GraphNode n2 = g.createOrGetNode(k2);
-            String pid3 = "3";
-            NodeKey k3 = new NodeKey("TYPE_P");
-            k3.put("PID", pid3);
             GraphNode n3 = g.createOrGetNode(k3);
 
             HashMap<String, String> attr = new HashMap<String, String>(0);
@@ -311,19 +293,10 @@ public class GraphTest {
         {
             Graph g = GFactory.get(graphId);
             g.beginTx();
-            String pid = "1";
-            NodeKey k1 = new NodeKey("TYPE_P");
-            k1.put("PID", pid);
             GraphNode n1 = g.createOrGetNode(k1);
-
-            String pid2 = "2";
-            NodeKey k2 = new NodeKey("TYPE_P");
-            k2.put("PID", pid2);
             GraphNode n2 = g.createOrGetNode(k2);
 
-            String pid4 = "4";
-            NodeKey k4 = new NodeKey("TYPE_P");
-            k4.put("PID", pid4);
+            // first creation of k4
             GraphNode n4 = g.createOrGetNode(k4);
 
             HashMap<String, String> attr = new HashMap<String, String>(0);
@@ -348,11 +321,9 @@ public class GraphTest {
             }
         });
 
-        NodeKey k1 = new NodeKey("TYPE_P", new Pair<>("PID", "1"));
         GraphNode n1 = g.createOrGetNode(k1);
         assertEquals(2, n1.getNeighbors().size());
 
-        NodeKey k2 = new NodeKey("TYPE_P", new Pair<>("PID", "2"));
         GraphNode n2 = g.createOrGetNode(k2);
         assertEquals(0, n2.getNeighbors().size());
     }
@@ -545,6 +516,7 @@ public class GraphTest {
         }
         {
             Graph g = GFactory.get(graphId);
+            g.beginTx();
             NodeKey k1 = new NodeKey("TYPE_P", new Pair<>("PID", "1"));
             g.removeNode(k1);
         }

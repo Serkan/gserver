@@ -8,7 +8,8 @@ public enum ActionType {
     GET_ALL_NODES,
     GET_ALL_EDGES,
     GET_ROOTS,
-    CREATE_OR_GET_NODE,
+    CREATE_NODE,
+    GET_NODE,
     REMOVE_NODE,
     ADD_EDGE,
     REMOVE_EDGE,
@@ -21,5 +22,6 @@ public enum ActionType {
     CREATE_GRAPH,
     CREATE_INDEX,
     ACQUIRE_LOCK,
-    RELEASE_LOCK
+    RELEASE_LOCK,
+    NODE_EXIST
 }
